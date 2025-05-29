@@ -85,8 +85,8 @@ def run(args):
     assert all(-(model.num_layers + 1) <= i <= model.num_layers for i in args.repr_layers)
     repr_layers = [(i + model.num_layers + 1) % (model.num_layers + 1) for i in args.repr_layers]
 
-    start_batch = 900
-    end_batch = 1200
+    start_batch = 000
+    end_batch = 200
     with torch.no_grad():
         for batch_idx, (labels, strs, toks) in tqdm(enumerate(data_loader)):
             if start_batch <= batch_idx and batch_idx < end_batch: 
@@ -106,6 +106,7 @@ def run(args):
                     contacts = out["contacts"].to(device="cpu")
     
                 for i, label in enumerate(labels):
+                    label = label.replace("/", "~")
                     args.output_file = args.output_dir / f"{label}.pt"
                     args.output_file.parent.mkdir(parents=True, exist_ok=True)
                     result = {"label": label}
