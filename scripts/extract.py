@@ -96,7 +96,7 @@ def run(args):
                 if torch.cuda.is_available() and not args.nogpu:
                     toks = toks.to(device="cuda", non_blocking=True)
     
-                out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts)
+                out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts).to(torch.float16)
     
                 logits = out["logits"].to(device="cpu")
                 representations = {
