@@ -96,17 +96,17 @@ def run(args):
                 if torch.cuda.is_available() and not args.nogpu:
                     toks = toks.to(device="cuda", non_blocking=True)
     
-                out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts).to(torch.float16)
+                out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts)
     
                 logits = out["logits"].to(device="cpu")
                 representations = {
-                    layer: t.to(device="cpu") for layer, t in out["representations"].items()
+                    layer: t.to(torch.float16).to(device="cpu") for layer, t in out["representations"].items()
                 }
                 if return_contacts:
                     contacts = out["contacts"].to(device="cpu")
     
                 for i, label in enumerate(labels):
-                    label = label.replace("/", "~")
+                    label = label.split("_")[1]
                     args.output_file = args.output_dir / f"{label}.pt"
                     args.output_file.parent.mkdir(parents=True, exist_ok=True)
                     result = {"label": label}
