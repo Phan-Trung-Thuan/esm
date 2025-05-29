@@ -100,7 +100,7 @@ def run(args):
     
                 logits = out["logits"].to(device="cpu")
                 representations = {
-                    layer: t.to(torch.float16).to(device="cpu") for layer, t in out["representations"].items()
+                    layer: t.to(torch.float32).to(device="cpu") for layer, t in out["representations"].items()
                 }
                 if return_contacts:
                     contacts = out["contacts"].to(device="cpu")
