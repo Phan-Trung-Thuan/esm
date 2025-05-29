@@ -86,7 +86,7 @@ def run(args):
     repr_layers = [(i + model.num_layers + 1) % (model.num_layers + 1) for i in args.repr_layers]
 
     start_batch = 500
-    end_batch = 800
+    end_batch = 700
     with torch.no_grad():
         for batch_idx, (labels, strs, toks) in tqdm(enumerate(data_loader)):
             if start_batch <= batch_idx and batch_idx < end_batch: 
