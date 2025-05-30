@@ -92,11 +92,10 @@ def run(args):
         for batch_idx, (labels, strs, toks) in tqdm(enumerate(data_loader)):
             if start_batch <= batch_idx and batch_idx < end_batch: 
                 print(
-                    f"Processing {batch_idx + 1} of {len(batches)} batches ({toks.size(0)} sequences)"
+                    f"Processing {batch_idx + 1} of {len(batches)} batches ({toks.size(0)} sequences with length {toks.size(1)})"
                 )
                 if torch.cuda.is_available() and not args.nogpu:
                     toks = toks.to(device="cuda", non_blocking=True)
-                    print(toks.shape)
     
                 out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts)
     
@@ -104,8 +103,9 @@ def run(args):
                 representations = {
                     layer: t.to(torch.float16).to(device="cpu") for layer, t in out["representations"].items()
                 }
-                print([t.shape for _, t in out["representations"].items()])
-                return
+                # print([t.shape for _, t in out["representations"].items()])
+                # return
+                
                 if return_contacts:
                     contacts = out["contacts"].to(device="cpu")
     
