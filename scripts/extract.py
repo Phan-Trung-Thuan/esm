@@ -46,7 +46,7 @@ def create_parser():
         "--include",
         type=str,
         nargs="+",
-        choices=["mean", "per_tok", "bos", "contacts"],
+        choices=["mean", "per_tok", "avg_per_tok", "bos", "contacts"],
         help="specify which representations to return",
         required=True,
     )
@@ -117,15 +117,17 @@ def run(args):
                     # Call clone on tensors to ensure tensors are not views into a larger representation
                     # See https://github.com/pytorch/pytorch/issues/1995
                     if "per_tok" in args.include:
-                        # result["representations"] = {
-                        #     layer: t[i, 1 : truncate_len + 1].clone()
-                        #     for layer, t in representations.items()
-                        # }
+                        result["representations"] = {
+                            layer: t[i, 1 : truncate_len + 1].clone()
+                            for layer, t in representations.items()
+                        }
+                    if "avg_per_tok" in args.include:
                         tmp = {
                             layer: t[i, 1 : truncate_len + 1].clone()
                             for layer, t in representations.items()
                         }
-                        results["avg_per_tok_layers"] = torch.stack([v for k, v in tmp.items()]).sum(dim=0) / len(repr_layers)
+                        result["avg_per_tok"] = torch.stack([v for k, v in tmp.items()]).sum(dim=0) / len(repr_layers)
+                        
                     if "mean" in args.include:
                         result["mean_representations"] = {
                             layer: t[i, 1 : truncate_len + 1].mean(0).clone()
