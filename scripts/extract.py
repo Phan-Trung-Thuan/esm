@@ -87,6 +87,7 @@ def run(args):
 
     start_batch = 000
     end_batch = 1200
+    max_sequence = 1280
     with torch.no_grad():
         for batch_idx, (labels, strs, toks) in tqdm(enumerate(data_loader)):
             if start_batch <= batch_idx and batch_idx < end_batch: 
@@ -100,8 +101,10 @@ def run(args):
     
                 logits = out["logits"].to(device="cpu")
                 representations = {
-                    layer: t.to(torch.float32).to(device="cpu") for layer, t in out["representations"].items()
+                    layer: t.to(torch.float16).to(device="cpu") for layer, t in out["representations"].items()
                 }
+                print([t.shape for _, t in out["representations"].items()])
+                return
                 if return_contacts:
                     contacts = out["contacts"].to(device="cpu")
     
