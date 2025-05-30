@@ -87,7 +87,6 @@ def run(args):
 
     start_batch = 000
     end_batch = 1200
-    max_sequence = 1280
     with torch.no_grad():
         for batch_idx, (labels, strs, toks) in tqdm(enumerate(data_loader)):
             if start_batch <= batch_idx and batch_idx < end_batch: 
@@ -118,10 +117,15 @@ def run(args):
                     # Call clone on tensors to ensure tensors are not views into a larger representation
                     # See https://github.com/pytorch/pytorch/issues/1995
                     if "per_tok" in args.include:
-                        result["representations"] = {
+                        # result["representations"] = {
+                        #     layer: t[i, 1 : truncate_len + 1].clone()
+                        #     for layer, t in representations.items()
+                        # }
+                        tmp = {
                             layer: t[i, 1 : truncate_len + 1].clone()
                             for layer, t in representations.items()
                         }
+                        results["avg_per_tok_layers"] = torch.stack([v for k, v in tmp.items()]).sum(dim=0) / len(repr_layers)
                     if "mean" in args.include:
                         result["mean_representations"] = {
                             layer: t[i, 1 : truncate_len + 1].mean(0).clone()
