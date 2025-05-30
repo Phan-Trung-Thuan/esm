@@ -96,6 +96,7 @@ def run(args):
                 )
                 if torch.cuda.is_available() and not args.nogpu:
                     toks = toks.to(device="cuda", non_blocking=True)
+                    print(toks.shape())
     
                 out = model(toks, repr_layers=repr_layers, return_contacts=return_contacts)
     
