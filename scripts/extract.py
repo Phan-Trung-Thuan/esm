@@ -109,6 +109,7 @@ def run(args):
                     contacts = out["contacts"].to(device="cpu")
     
                 for i, label in enumerate(labels):
+                    print(label)
                     id, label = label.split(" ")
                     args.output_file = args.output_dir / f"{id}_{label}.pt"
                     args.output_file.parent.mkdir(parents=True, exist_ok=True)
